@@ -12,24 +12,15 @@ export class UsersService {
     const createdUser = new this.userModel(createUserDto);
     return await createdUser.save();
   }
-  // async create(createUserDto: CreateUserDto) {
-  //   try {
-  //     const createdUser = new this.userModel(createUserDto);
-  //     return await createdUser.save();
-  //   } catch (error) {
-  //     console.log('error');
-  //     if (error.code === 11000) {
-  //       throw new ConflictException('Email already exists');
-  //     }
-  //   }
-  // }
 
   findAll() {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(email: string) {
+    return this.userModel.findOne({
+      email,
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
