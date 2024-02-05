@@ -1,24 +1,26 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { USER_MODEL } from './users.constants';
 import { Model } from 'mongoose';
-import { User } from './interfaces/users.interface';
+import { User } from './schemas/users.schema';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class UsersService {
-  constructor(@Inject(USER_MODEL) private userModel: Model<User>) {}
-  create(createUserDto: CreateUserDto) {
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  async create(createUserDto: CreateUserDto) {
     const createdUser = new this.userModel(createUserDto);
-    return createdUser.save();
+    return await createdUser.save();
   }
 
   findAll() {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(email: string) {
+    return this.userModel.findOne({
+      email,
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
