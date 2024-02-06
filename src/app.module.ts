@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { IamModule } from './iam/iam.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
     MongooseModule.forRoot('mongodb://localhost:27017/eventful'),
     UsersModule,
     IamModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
