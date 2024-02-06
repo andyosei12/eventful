@@ -8,6 +8,9 @@ import { BcryptService } from './auth/hashing/bcrypt.service';
 import { JwtModule } from '@nestjs/jwt';
 import jwtConfig from './config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/auth.guard';
+import { RolesGuard } from './authorization/guards/roles.guard';
 
 @Module({
   imports: [
@@ -19,6 +22,8 @@ import { ConfigModule } from '@nestjs/config';
   providers: [
     AuthService,
     UsersService,
+    { provide: APP_GUARD, useClass: AuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
     { provide: HashingService, useClass: BcryptService },
   ],
 })
