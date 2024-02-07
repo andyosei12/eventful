@@ -6,6 +6,7 @@ import { IamModule } from './iam/iam.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { EventsModule } from './events/events.module';
+import { TicketsModule } from './tickets/tickets.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { EventsModule } from './events/events.module';
     UsersModule,
     IamModule,
     EventsModule,
+    TicketsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
