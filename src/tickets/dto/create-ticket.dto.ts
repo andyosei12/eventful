@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { Status } from '../enums/status.enum';
 
 export class CreateTicketDto {
@@ -7,4 +7,7 @@ export class CreateTicketDto {
 
   @IsOptional()
   status: Status;
+
+  @IsNumber()
+  daysBefore: number;
 }

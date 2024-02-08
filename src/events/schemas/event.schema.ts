@@ -21,6 +21,9 @@ export class Event {
   location: string;
 
   @Prop()
+  reminder_date: Date;
+
+  @Prop()
   creator_id: Types.ObjectId;
 
   @Prop({ default: Date.now() })

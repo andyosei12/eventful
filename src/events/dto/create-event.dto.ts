@@ -15,4 +15,7 @@ export class CreateEventDto {
 
   @IsString()
   location: string;
+
+  @IsNumber()
+  daysBefore: number;
 }
