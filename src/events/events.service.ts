@@ -4,13 +4,20 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Event } from './schemas/event.schema';
 import { Model, Types } from 'mongoose';
+import getDateBeforeEvent from 'src/utils/getDateBeforeEvent';
 
 @Injectable()
 export class EventsService {
   constructor(@InjectModel(Event.name) private eventModel: Model<Event>) {}
   create(createEventDto: CreateEventDto, creatorId: Types.ObjectId) {
+    const reminderDate = getDateBeforeEvent(
+      createEventDto.date,
+      createEventDto.daysBefore,
+    );
+
     const createdEvent = new this.eventModel(createEventDto);
     createdEvent.creator_id = creatorId;
+    createdEvent.reminder_date = reminderDate;
     return createdEvent.save();
   }
 

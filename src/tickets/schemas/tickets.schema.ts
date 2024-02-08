@@ -15,6 +15,9 @@ export class Ticket {
   @Prop({ enum: Status, default: Status.Pending })
   status: Status;
 
+  @Prop()
+  reminder_date: Date;
+
   @Prop({ default: Date.now() })
   created_at: Date;
 }

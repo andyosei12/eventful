@@ -11,17 +11,32 @@ import * as QRCode from 'qrcode';
 import { InjectModel } from '@nestjs/mongoose';
 import { Ticket } from './schemas/tickets.schema';
 import { Status } from './enums/status.enum';
+import getDateBeforeEvent from 'src/utils/getDateBeforeEvent';
+import { Event } from 'src/events/schemas/event.schema';
 
 @Injectable()
 export class TicketsService {
   constructor(
     @InjectModel(Ticket.name) private readonly ticketModel: Model<Ticket>,
+    @InjectModel(Event.name) private readonly eventModel: Model<Event>,
   ) {}
 
   async create(createTicketDto: CreateTicketDto, user_id: Types.ObjectId) {
+    // find the event date asociated with the ticket
+    const event = await this.eventModel.findById(
+      { _id: createTicketDto.event_id },
+      'date',
+    );
+    const eventDate = event.date;
+
+    const reminderDate = getDateBeforeEvent(
+      eventDate,
+      createTicketDto.daysBefore,
+    );
     const ticket = new this.ticketModel({
       user_id,
       event_id: createTicketDto.event_id,
+      reminder_date: reminderDate,
     });
 
     const ticketId = ticket._id.toString();
