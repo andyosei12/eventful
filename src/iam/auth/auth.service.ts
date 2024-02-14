@@ -70,6 +70,14 @@ export class AuthService {
       expiresIn: this.jwtConfiguration.accessTokenTtl,
     });
 
-    return { accessToken };
+    return {
+      accessToken,
+      user: {
+        email: user.email,
+        role: user.role,
+        firstName: user.first_name,
+        id: user._id,
+      },
+    };
   }
 }
