@@ -28,6 +28,7 @@ export class EventsController {
   ) {
     const creatorId = user.sub;
     createEventDto.price = +createEventDto.price.toFixed(2);
+    createEventDto.daysBefore = createEventDto.daysBefore || 1;
     return this.eventsService.create(createEventDto, creatorId);
   }
 
