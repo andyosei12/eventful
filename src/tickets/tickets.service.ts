@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -44,7 +45,7 @@ export class TicketsService {
 
     // Generate QR code
     try {
-      url = await QRCode.toDataURL(ticketId);
+      url = await QRCode.toDataURL(`${ticketId}`);
       await ticket.save();
     } catch (err) {
       throw new HttpException(
@@ -65,20 +66,34 @@ export class TicketsService {
     return `This action returns a #${id} ticket`;
   }
 
-  async update(id: string, user_id: Types.ObjectId) {
-    // Check if the ticket exists and has not been used
+  async update(ticketId: string, user_id: Types.ObjectId) {
+    // Check if the ticket exists
     const ticket = await this.ticketModel.findOne({
-      _id: id,
-      status: Status.Pending,
-      user_id,
+      _id: ticketId,
     });
     if (!ticket) {
-      return new NotFoundException('Ticket not found or has been used');
+      throw new NotFoundException('Ticket not found');
+    } else if (ticket.status === Status.Completed) {
+      throw new ConflictException('Ticket has already been scanned or used');
     }
-    return this.ticketModel.updateOne(
-      { _id: id },
+    // Check if the user is the creator of the event
+    const event = await this.eventModel.findOne({
+      _id: ticket.event_id,
+      creator_id: user_id,
+    });
+    if (!event) {
+      throw new NotFoundException('Ticket does not match any of your events');
+    }
+
+    // Update the ticket status
+    await this.ticketModel.updateOne(
+      { _id: ticketId },
       { status: Status.Completed },
     );
+
+    return {
+      message: `Access granted for ${event.title}`,
+    };
   }
 
   remove(id: number) {
