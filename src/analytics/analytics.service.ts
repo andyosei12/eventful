@@ -12,6 +12,10 @@ export class AnalyticsService {
     @InjectModel(Event.name) private readonly eventModel: Model<any>,
   ) {}
 
+  getTotalEvents(creator_id: Types.ObjectId) {
+    return this.eventModel.countDocuments({ creator_id });
+  }
+
   getTicketsSold(creator_id: Types.ObjectId) {
     return this.ticketModel.countDocuments({ creator_id });
   }
