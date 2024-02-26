@@ -10,6 +10,13 @@ export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
   @Roles(Role.Creator)
+  @Get('/events/total')
+  getTotalEvents(@ActiveUser() user: ActiveUserData) {
+    const creator_id = user.sub;
+    return this.analyticsService.getTotalEvents(creator_id);
+  }
+
+  @Roles(Role.Creator)
   @Get('/tickets_sold')
   getTicketsSold(@ActiveUser() user: ActiveUserData) {
     const creator_id = user.sub;
