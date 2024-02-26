@@ -26,9 +26,10 @@ export class TicketsService {
     // find the event date asociated with the ticket
     const event = await this.eventModel.findById(
       { _id: createTicketDto.event_id },
-      'date',
+      'date creator_id',
     );
     const eventDate = event.date;
+    const eventCreatorId = event.creator_id;
 
     const reminderDate = getDateBeforeEvent(
       eventDate,
@@ -37,6 +38,7 @@ export class TicketsService {
     const ticket = new this.ticketModel({
       user_id,
       event_id: createTicketDto.event_id,
+      creator_id: eventCreatorId,
       reminder_date: reminderDate,
     });
 
@@ -70,6 +72,7 @@ export class TicketsService {
     // Check if the ticket exists
     const ticket = await this.ticketModel.findOne({
       _id: ticketId,
+      creator_id: user_id,
     });
     if (!ticket) {
       throw new NotFoundException('Ticket not found');
@@ -79,11 +82,7 @@ export class TicketsService {
     // Check if the user is the creator of the event
     const event = await this.eventModel.findOne({
       _id: ticket.event_id,
-      creator_id: user_id,
     });
-    if (!event) {
-      throw new NotFoundException('Ticket does not match any of your events');
-    }
 
     // Update the ticket status
     await this.ticketModel.updateOne(

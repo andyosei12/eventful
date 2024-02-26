@@ -10,10 +10,13 @@ export class Ticket {
   user_id: Types.ObjectId;
 
   @Prop()
-  event_id: string;
+  event_id: Types.ObjectId;
 
   @Prop({ enum: Status, default: Status.Pending })
   status: Status;
+
+  @Prop()
+  creator_id: Types.ObjectId;
 
   @Prop()
   reminder_date: Date;
