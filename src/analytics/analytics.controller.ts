@@ -61,7 +61,7 @@ export class AnalyticsController {
   }
 
   @Roles(Role.Creator)
-  @Get('revenue/:eventId')
+  @Get(':eventId/revenue')
   getRevenueByEvent(
     @Param('eventId') eventId: string,
     @ActiveUser() user: ActiveUserData,
