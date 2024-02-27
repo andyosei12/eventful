@@ -12,7 +12,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb://localhost:27017/eventful'),
+    MongooseModule.forRoot(`${process.env.MONGODB_URL}`),
     UsersModule,
     IamModule,
     EventsModule,
