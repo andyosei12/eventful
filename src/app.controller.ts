@@ -6,6 +6,7 @@ import { Public } from './iam/auth/decorators/skip-auth.decorator';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  // Make the root route public
   @Public()
   @Get()
   getHello(): string {
