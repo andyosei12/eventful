@@ -68,6 +68,37 @@ export class TicketsService {
     return `This action returns a #${id} ticket`;
   }
 
+  findUserTickets(user_id: Types.ObjectId) {
+    // make a join with the events collection
+    return this.ticketModel.aggregate([
+      {
+        $match: {
+          user_id,
+        },
+      },
+      { $set: { event_id: { $toObjectId: '$event_id' } } },
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'event_id',
+          foreignField: '_id',
+          as: 'event',
+        },
+      },
+      {
+        $unwind: '$event',
+      },
+      {
+        $project: {
+          _id: 1,
+          event: 1,
+          status: 1,
+          reminder_date: 1,
+        },
+      },
+    ]);
+  }
+
   async update(ticketId: string, user_id: Types.ObjectId) {
     // Check if the ticket exists
     const ticket = await this.ticketModel.findOne({

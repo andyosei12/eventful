@@ -38,6 +38,13 @@ export class TicketsController {
     return this.ticketsService.findOne(+id);
   }
 
+  // Get all user tickets
+  @Get('auth/user')
+  findUserTickets(@ActiveUser() user: ActiveUserData) {
+    const userId = user.sub;
+    return this.ticketsService.findUserTickets(userId);
+  }
+
   @Roles(Role.Creator)
   @Patch(':ticketId')
   update(
