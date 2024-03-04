@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { EventsModule } from './events/events.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { QrCodeModule } from './qr_code/qr_code.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     EventsModule,
     TicketsModule,
     AnalyticsModule,
+    QrCodeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
