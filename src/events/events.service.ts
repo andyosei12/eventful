@@ -12,7 +12,7 @@ export class EventsService {
   create(createEventDto: CreateEventDto, creatorId: Types.ObjectId) {
     const reminderDate = getDateBeforeEvent(
       createEventDto.date,
-      createEventDto.daysBefore,
+      createEventDto.days_before,
     );
 
     const createdEvent = new this.eventModel(createEventDto);
@@ -31,7 +31,7 @@ export class EventsService {
       return event;
     } catch (error) {
       if (error.name === 'CastError') {
-        return new NotFoundException(`Event with ${error.path} not found`);
+        throw new NotFoundException(`Event with ${error.path} not found`);
       }
     }
   }
@@ -41,13 +41,37 @@ export class EventsService {
   }
 
   async update(id: string, updateEventDto: UpdateEventDto) {
+    // this logic is to update the reminder date if the days_before is updated
+    let reminderDate;
+    const event = await this.eventModel.findById(id).exec();
+    if (!event) {
+      throw new NotFoundException(`Event with id ${id} not found`);
+    }
+    if (updateEventDto.days_before && !updateEventDto.date) {
+      // find the event and get the date
+      const date = event.date;
+      reminderDate = getDateBeforeEvent(date, updateEventDto.days_before);
+    } else {
+      reminderDate = getDateBeforeEvent(
+        updateEventDto.date,
+        updateEventDto.days_before,
+      );
+    }
+
     try {
       return await this.eventModel
-        .findByIdAndUpdate(id, updateEventDto, { new: true })
+        .findByIdAndUpdate(
+          id,
+          {
+            ...updateEventDto,
+            reminder_date: reminderDate || event.reminder_date,
+          },
+          { new: true },
+        )
         .exec();
     } catch (error) {
       if (error.name === 'CastError') {
-        return new NotFoundException(`Event with ${error.path} not found`);
+        throw new NotFoundException(`Event with ${error.path} not found`);
       }
     }
   }
@@ -57,7 +81,7 @@ export class EventsService {
       return await this.eventModel.deleteOne({ _id: id }).exec();
     } catch (error) {
       if (error.name === 'CastError') {
-        return new NotFoundException(`Event with ${error.path} not found`);
+        throw new NotFoundException(`Event with ${error.path} not found`);
       }
     }
   }

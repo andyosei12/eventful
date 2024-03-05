@@ -15,10 +15,16 @@ export class Event {
   date: Date;
 
   @Prop()
+  time: string;
+
+  @Prop()
   price: number;
 
   @Prop()
   location: string;
+
+  @Prop()
+  days_before: string;
 
   @Prop()
   reminder_date: Date;
