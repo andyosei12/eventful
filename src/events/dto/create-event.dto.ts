@@ -1,4 +1,4 @@
-import { IsDate, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsString, isString } from 'class-validator';
 
 export class CreateEventDto {
   @IsString()
@@ -10,6 +10,9 @@ export class CreateEventDto {
   @IsDate()
   date: Date;
 
+  @IsString()
+  time: string;
+
   @IsNumber()
   price: number;
 
@@ -17,5 +20,5 @@ export class CreateEventDto {
   location: string;
 
   @IsNumber()
-  daysBefore: number;
+  days_before: number;
 }
