@@ -137,7 +137,13 @@ export class TicketsService {
     };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} ticket`;
+  async remove(id: number) {
+    try {
+      return await this.ticketModel.deleteOne({ _id: id }).exec();
+    } catch (error) {
+      if (error.name === 'CastError') {
+        throw new NotFoundException(`Event with ${error.path} not found`);
+      }
+    }
   }
 }

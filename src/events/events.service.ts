@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -6,10 +6,15 @@ import { Event } from './schemas/event.schema';
 import { Model, Types } from 'mongoose';
 import getDateBeforeEvent from 'src/utils/getDateBeforeEvent';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class EventsService {
-  constructor(@InjectModel(Event.name) private eventModel: Model<Event>) {}
+  constructor(
+    @InjectModel(Event.name) private eventModel: Model<Event>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
   create(createEventDto: CreateEventDto, creatorId: Types.ObjectId) {
     const reminderDate = getDateBeforeEvent(
       createEventDto.date,
@@ -31,7 +36,13 @@ export class EventsService {
 
   async findOne(id: string) {
     try {
+      const value = await this.cacheManager.get(id);
+      if (value) {
+        return value;
+      }
       const event = await this.eventModel.findById(id).exec();
+      // caching the event for 24 hours
+      await this.cacheManager.set(id, event, 86400000);
       return event;
     } catch (error) {
       if (error.name === 'CastError') {
@@ -58,6 +69,7 @@ export class EventsService {
     // this logic is to update the reminder date if the days_before is updated
     let reminderDate;
     const event = await this.eventModel.findById(id).exec();
+
     if (!event) {
       throw new NotFoundException(`Event with id ${id} not found`);
     }
@@ -65,7 +77,9 @@ export class EventsService {
       // find the event and get the date
       const date = event.date;
       reminderDate = getDateBeforeEvent(date, updateEventDto.days_before);
-    } else {
+    }
+
+    if (updateEventDto.days_before && updateEventDto.date) {
       reminderDate = getDateBeforeEvent(
         updateEventDto.date,
         updateEventDto.days_before,
@@ -73,7 +87,7 @@ export class EventsService {
     }
 
     try {
-      return await this.eventModel
+      const updatedEvent = await this.eventModel
         .findByIdAndUpdate(
           id,
           {
@@ -83,6 +97,8 @@ export class EventsService {
           { new: true },
         )
         .exec();
+      await this.cacheManager.del(id);
+      return updatedEvent;
     } catch (error) {
       if (error.name === 'CastError') {
         throw new NotFoundException(`Event with ${error.path} not found`);
