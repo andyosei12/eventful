@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Event } from './schemas/event.schema';
 import { Model, Types } from 'mongoose';
 import getDateBeforeEvent from 'src/utils/getDateBeforeEvent';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 @Injectable()
 export class EventsService {
@@ -21,8 +22,11 @@ export class EventsService {
     return createdEvent.save();
   }
 
-  findAll() {
-    return this.eventModel.find().exec();
+  findAll(paginationQuery: PaginationQueryDto) {
+    const page = paginationQuery.page * 1 || 1;
+    const limit = paginationQuery.limit * 1 || 20;
+    const skip = (page - 1) * limit;
+    return this.eventModel.find().skip(skip).limit(limit).exec();
   }
 
   async findOne(id: string) {
@@ -36,8 +40,18 @@ export class EventsService {
     }
   }
 
-  findCreatorEvents(creatorId: Types.ObjectId) {
-    return this.eventModel.find({ creator_id: creatorId }).exec();
+  findCreatorEvents(
+    creatorId: Types.ObjectId,
+    paginationQuery: PaginationQueryDto,
+  ) {
+    const page = paginationQuery.page * 1 || 1;
+    const limit = paginationQuery.limit * 1 || 20;
+    const skip = (page - 1) * limit;
+    return this.eventModel
+      .find({ creator_id: creatorId })
+      .skip(skip)
+      .limit(limit)
+      .exec();
   }
 
   async update(id: string, updateEventDto: UpdateEventDto) {

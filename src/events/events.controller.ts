@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -15,6 +16,7 @@ import { Role } from 'src/users/enums/role.enum';
 import { ActiveUser } from 'src/iam/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Public } from 'src/iam/auth/decorators/skip-auth.decorator';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 @Controller('events')
 export class EventsController {
@@ -34,8 +36,8 @@ export class EventsController {
 
   @Public()
   @Get()
-  findAll() {
-    return this.eventsService.findAll();
+  findAll(@Query() paginationQuery: PaginationQueryDto) {
+    return this.eventsService.findAll(paginationQuery);
   }
 
   @Public()
@@ -47,9 +49,12 @@ export class EventsController {
   // Get creator events
   @Roles(Role.Creator)
   @Get('/auth/creator')
-  findCreatorEvents(@ActiveUser() user: ActiveUserData) {
+  findCreatorEvents(
+    @ActiveUser() user: ActiveUserData,
+    @Query() paginationQuery: PaginationQueryDto,
+  ) {
     const creatorId = user.sub;
-    return this.eventsService.findCreatorEvents(creatorId);
+    return this.eventsService.findCreatorEvents(creatorId, paginationQuery);
   }
 
   @Roles(Role.Creator)

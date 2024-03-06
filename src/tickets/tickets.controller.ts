@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
@@ -14,6 +15,7 @@ import { ActiveUser } from 'src/iam/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Roles } from 'src/iam/authorization/decorators/roles.decorator';
 import { Role } from 'src/users/enums/role.enum';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 @Controller('tickets')
 export class TicketsController {
@@ -40,9 +42,12 @@ export class TicketsController {
 
   // Get all user tickets
   @Get('auth/user')
-  findUserTickets(@ActiveUser() user: ActiveUserData) {
+  findUserTickets(
+    @ActiveUser() user: ActiveUserData,
+    @Query() paginationQuery: PaginationQueryDto,
+  ) {
     const userId = user.sub;
-    return this.ticketsService.findUserTickets(userId);
+    return this.ticketsService.findUserTickets(userId, paginationQuery);
   }
 
   @Roles(Role.Creator)

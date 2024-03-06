@@ -14,6 +14,7 @@ import { Ticket } from './schemas/tickets.schema';
 import { Status } from './enums/status.enum';
 import getDateBeforeEvent from 'src/utils/getDateBeforeEvent';
 import { Event } from 'src/events/schemas/event.schema';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 @Injectable()
 export class TicketsService {
@@ -68,35 +69,45 @@ export class TicketsService {
     return `This action returns a #${id} ticket`;
   }
 
-  findUserTickets(user_id: Types.ObjectId) {
+  findUserTickets(
+    user_id: Types.ObjectId,
+    paginationQuery: PaginationQueryDto,
+  ) {
+    const page = paginationQuery.page * 1 || 1;
+    const limit = paginationQuery.limit * 1 || 20;
+    const skip = (page - 1) * limit;
     // make a join with the events collection
-    return this.ticketModel.aggregate([
-      {
-        $match: {
-          user_id,
+    return this.ticketModel
+      .aggregate([
+        {
+          $match: {
+            user_id,
+          },
         },
-      },
-      { $set: { event_id: { $toObjectId: '$event_id' } } },
-      {
-        $lookup: {
-          from: 'events',
-          localField: 'event_id',
-          foreignField: '_id',
-          as: 'event',
+        { $set: { event_id: { $toObjectId: '$event_id' } } },
+        {
+          $lookup: {
+            from: 'events',
+            localField: 'event_id',
+            foreignField: '_id',
+            as: 'event',
+          },
         },
-      },
-      {
-        $unwind: '$event',
-      },
-      {
-        $project: {
-          _id: 1,
-          event: 1,
-          status: 1,
-          reminder_date: 1,
+        {
+          $unwind: '$event',
         },
-      },
-    ]);
+        {
+          $project: {
+            _id: 1,
+            event: 1,
+            status: 1,
+            reminder_date: 1,
+          },
+        },
+      ])
+      .skip(skip)
+      .limit(limit)
+      .exec();
   }
 
   async update(ticketId: string, user_id: Types.ObjectId) {
