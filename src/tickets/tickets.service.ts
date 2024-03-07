@@ -65,6 +65,47 @@ export class TicketsService {
     return `This action returns all tickets`;
   }
 
+  findCompletedTickets(
+    paginationQuery: PaginationQueryDto,
+    user_id: Types.ObjectId,
+  ) {
+    const page = paginationQuery.page * 1 || 1;
+    const limit = paginationQuery.limit * 1 || 20;
+    const skip = (page - 1) * limit;
+    // make a join with the events collection
+    return this.ticketModel
+      .aggregate([
+        {
+          $match: {
+            user_id,
+            status: Status.Completed,
+          },
+        },
+        { $set: { event_id: { $toObjectId: '$event_id' } } },
+        {
+          $lookup: {
+            from: 'events',
+            localField: 'event_id',
+            foreignField: '_id',
+            as: 'event',
+          },
+        },
+        {
+          $unwind: '$event',
+        },
+        {
+          $project: {
+            _id: 1,
+            event: 1,
+            status: 1,
+          },
+        },
+      ])
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} ticket`;
   }

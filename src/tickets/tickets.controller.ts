@@ -35,6 +35,14 @@ export class TicketsController {
     return this.ticketsService.findAll();
   }
 
+  @Get('completed')
+  findCompletedTickets(
+    @Query() paginationQuery: PaginationQueryDto,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    return this.ticketsService.findCompletedTickets(paginationQuery, user.sub);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.ticketsService.findOne(+id);
