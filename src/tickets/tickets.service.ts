@@ -12,9 +12,9 @@ import * as QRCode from 'qrcode';
 import { InjectModel } from '@nestjs/mongoose';
 import { Ticket } from './schemas/tickets.schema';
 import { Status } from './enums/status.enum';
-import getDateBeforeEvent from 'src/utils/getDateBeforeEvent';
-import { Event } from 'src/events/schemas/event.schema';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import getDateBeforeEvent from '../utils/getDateBeforeEvent';
+import { Event } from '../events/schemas/event.schema';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 
 @Injectable()
 export class TicketsService {
@@ -61,10 +61,6 @@ export class TicketsService {
     };
   }
 
-  findAll() {
-    return `This action returns all tickets`;
-  }
-
   findCompletedTickets(
     paginationQuery: PaginationQueryDto,
     user_id: Types.ObjectId,
@@ -104,10 +100,6 @@ export class TicketsService {
       .skip(skip)
       .limit(limit)
       .exec();
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} ticket`;
   }
 
   findUserTickets(
