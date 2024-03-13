@@ -4,10 +4,20 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Event } from './schemas/event.schema';
 import { Model, Types } from 'mongoose';
-import getDateBeforeEvent from 'src/utils/getDateBeforeEvent';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import getDateBeforeEvent from '../utils/getDateBeforeEvent';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+
+type EventData = {
+  _id: Types.ObjectId;
+  title: string;
+  description: string;
+  date: Date;
+  reminder_date: Date;
+  price: number;
+  days_before: string;
+};
 
 @Injectable()
 export class EventsService {
@@ -28,19 +38,21 @@ export class EventsService {
   }
 
   findAll(paginationQuery: PaginationQueryDto) {
-    const page = paginationQuery.page * 1 || 1;
-    const limit = paginationQuery.limit * 1 || 20;
+    const page = paginationQuery?.page * 1 || 1;
+    const limit = paginationQuery?.limit * 1 || 20;
     const skip = (page - 1) * limit;
     return this.eventModel.find().skip(skip).limit(limit).exec();
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<EventData> {
     try {
-      const value = await this.cacheManager.get(id);
+      const value: EventData | undefined = await this.cacheManager.get(id);
+
       if (value) {
         return value;
       }
-      const event = await this.eventModel.findById(id).exec();
+      const event: EventData = await this.eventModel.findById(id).exec();
+
       // caching the event for 24 hours
       await this.cacheManager.set(id, event, 86400000);
       return event;

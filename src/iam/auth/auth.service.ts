@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { SignupDto } from './dto/signup-dto';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../../users/users.service';
 import { HashingService } from './hashing/hashing.service';
 import { SigninDto } from './dto/signin-dto';
 import { JwtService } from '@nestjs/jwt';

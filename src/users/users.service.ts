@@ -12,22 +12,4 @@ export class UsersService {
     const createdUser = new this.userModel(createUserDto);
     return await createdUser.save();
   }
-
-  findAll() {
-    return `This action returns all users`;
-  }
-
-  findOne(email: string) {
-    return this.userModel.findOne({
-      email,
-    });
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
 }

@@ -11,11 +11,11 @@ import {
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
-import { ActiveUser } from 'src/iam/decorator/active-user.decorator';
-import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { Roles } from 'src/iam/authorization/decorators/roles.decorator';
-import { Role } from 'src/users/enums/role.enum';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { ActiveUser } from '../iam/decorator/active-user.decorator';
+import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
+import { Roles } from '../iam/authorization/decorators/roles.decorator';
+import { Role } from '../users/enums/role.enum';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 
 @Controller('tickets')
 export class TicketsController {
@@ -30,22 +30,12 @@ export class TicketsController {
     return this.ticketsService.create(createTicketDto, user_id);
   }
 
-  @Get()
-  findAll() {
-    return this.ticketsService.findAll();
-  }
-
   @Get('completed')
   findCompletedTickets(
     @Query() paginationQuery: PaginationQueryDto,
     @ActiveUser() user: ActiveUserData,
   ) {
     return this.ticketsService.findCompletedTickets(paginationQuery, user.sub);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ticketsService.findOne(+id);
   }
 
   // Get all user tickets

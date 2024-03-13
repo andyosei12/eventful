@@ -11,12 +11,12 @@ import {
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-import { Roles } from 'src/iam/authorization/decorators/roles.decorator';
-import { Role } from 'src/users/enums/role.enum';
-import { ActiveUser } from 'src/iam/decorator/active-user.decorator';
-import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { Public } from 'src/iam/auth/decorators/skip-auth.decorator';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { Roles } from '../iam/authorization/decorators/roles.decorator';
+import { Role } from '../users/enums/role.enum';
+import { ActiveUser } from '../iam/decorator/active-user.decorator';
+import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
+import { Public } from '../iam/auth/decorators/skip-auth.decorator';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 
 @Controller('events')
 export class EventsController {
@@ -36,7 +36,7 @@ export class EventsController {
 
   @Public()
   @Get()
-  findAll(@Query() paginationQuery: PaginationQueryDto) {
+  findAll(@Query() paginationQuery?: PaginationQueryDto) {
     return this.eventsService.findAll(paginationQuery);
   }
 
