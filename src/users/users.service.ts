@@ -12,4 +12,10 @@ export class UsersService {
     const createdUser = new this.userModel(createUserDto);
     return await createdUser.save();
   }
+
+  findOne(email: string) {
+    return this.userModel.findOne({
+      email,
+    });
+  }
 }
