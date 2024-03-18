@@ -1,73 +1,48 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Efiada: Your ultimate portal to events happening around you.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Efiada is a word in the Ghanaian tribe (Akans) meaning Friday and we know the fun mostly starts on Friday.
+Efiada helps organizers of events create and manage events they are hosting and also gives users the convenience of purchasing tickets. Efiada seeks to expose people to unlimited fun.
+These three activities are at the core of the operations of Efiada: **Create,Explore,Enjoy**
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+**Create an account or login and start managing your events. Visit [Curated](https://efiada.netlify.app/)**
 
-## Description
+## Setting up your local environment
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+1. Clone this repository
+2. Run **npm install / npm i** to install all packages
+3. Set up your environment variables. The content of required for the .env file can be seen in the .env.example file.
+4. Add the database name as part of the database url
+5. The application uses Mongodb as the database
+6. Run npm start to start the local server
+7. Run npm test to run test files
 
-## Installation
+## API Documentation
 
-```bash
-$ npm install
-```
+The following are routes and requirements for different endpoints of our api
 
-## Running the app
+### Authentication
 
-```bash
-# development
-$ npm run start
+- _POST: /auth/signup_ => Endpoint for signing up a user. The first_name, last_name, email and password are required. The email is unique. The endpoint returns the created user
 
-# watch mode
-$ npm run start:dev
+- _POST: /auth/signin_ => Endpoint for login. Requires email and password and returns a jwt token and user info
 
-# production mode
-$ npm run start:prod
-```
+### Events
 
-## Test
+- _GET: /api/v1/blogs_ => Endpoint for fetching all blogs whether logged in or not logged in
 
-```bash
-# unit tests
-$ npm run test
+- _GET: /api/v1/user/blogs_ => Endpoint for fetching all blogs of an authenticated user. It is required to pass in the jwt token in the authorization header to be able to get access to the blogs of a particaular user.
 
-# e2e tests
-$ npm run test:e2e
+You can sort by the read_count,reading_time and created at. By default blogs are sorted by created_at.
+Results are limited to 20 documents per page
+You can also search by author,title and tags
+You can query by the state of the blog when a user is logged in (either draft of published).
 
-# test coverage
-$ npm run test:cov
-```
+- _POST: /api/v1/blogs_ => Endpoint for creating a blog. Authorization header is also required to create task. The title, description,tags and body fields are required and these are the only fields needed to created a blog. The author of the blog is generated automatically.
 
-## Support
+- _GET: /api/v1/blogs/:blogId_ => Endpoint to get details of a blog.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- _PATCH: /api/v1/blogs/:blogId_ => For updating a blog. Authorization header is also required to update blog
 
-## Stay in touch
+- _PATCH: /api/v1/blogs/:blogId/status_ => For updating a blog status to published. Authorization header is also required to update blog status
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+- _DELETE: /api/v1/blogs/:blogId_ => For deleting blog. Authorization header is also required to delete a blog
