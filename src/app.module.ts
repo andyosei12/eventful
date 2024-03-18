@@ -10,7 +10,7 @@ import { EventsModule } from './events/events.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { QrCodeModule } from './qr_code/qr_code.module';
-import { TaskService } from './notifications/task.service';
+import { TaskModule } from './notifications/task.module';
 
 @Module({
   imports: [
@@ -23,8 +23,9 @@ import { TaskService } from './notifications/task.service';
     TicketsModule,
     AnalyticsModule,
     QrCodeModule,
+    TaskModule,
   ],
   controllers: [AppController],
-  providers: [AppService, TaskService],
+  providers: [AppService],
 })
 export class AppModule {}
