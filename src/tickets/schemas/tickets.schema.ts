@@ -18,9 +18,6 @@ export class Ticket {
   @Prop()
   creator_id: Types.ObjectId;
 
-  @Prop()
-  reminder_date: Date;
-
   @Prop({ default: Date.now() })
   created_at: Date;
 }

@@ -17,11 +17,13 @@ import { ActiveUser } from '../iam/decorator/active-user.decorator';
 import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 import { Public } from '../iam/auth/decorators/skip-auth.decorator';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
+  @ApiBearerAuth()
   @Roles(Role.Creator)
   @Post()
   create(
@@ -47,6 +49,7 @@ export class EventsController {
   }
 
   // Get creator events
+  @ApiBearerAuth()
   @Roles(Role.Creator)
   @Get('/auth/creator')
   findCreatorEvents(
@@ -57,12 +60,14 @@ export class EventsController {
     return this.eventsService.findCreatorEvents(creatorId, paginationQuery);
   }
 
+  @ApiBearerAuth()
   @Roles(Role.Creator)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventsService.update(id, updateEventDto);
   }
 
+  @ApiBearerAuth()
   @Roles(Role.Creator)
   @Delete(':id')
   remove(@Param('id') id: string) {

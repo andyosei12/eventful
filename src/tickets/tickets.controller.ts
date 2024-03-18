@@ -16,11 +16,13 @@ import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 import { Roles } from '../iam/authorization/decorators/roles.decorator';
 import { Role } from '../users/enums/role.enum';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('tickets')
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
+  @ApiBearerAuth()
   @Post()
   create(
     @Body() createTicketDto: CreateTicketDto,
@@ -30,6 +32,7 @@ export class TicketsController {
     return this.ticketsService.create(createTicketDto, user_id);
   }
 
+  @ApiBearerAuth()
   @Get('completed')
   findCompletedTickets(
     @Query() paginationQuery: PaginationQueryDto,
@@ -39,6 +42,7 @@ export class TicketsController {
   }
 
   // Get all user tickets
+  @ApiBearerAuth()
   @Get('auth/user')
   findUserTickets(
     @ActiveUser() user: ActiveUserData,
@@ -48,6 +52,7 @@ export class TicketsController {
     return this.ticketsService.findUserTickets(userId, paginationQuery);
   }
 
+  @ApiBearerAuth()
   @Roles(Role.Creator)
   @Patch(':ticketId')
   update(
@@ -57,6 +62,7 @@ export class TicketsController {
     return this.ticketsService.update(ticketId, user.sub);
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.ticketsService.remove(+id);

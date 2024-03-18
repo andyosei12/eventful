@@ -29,18 +29,12 @@ export class TicketsService {
       { _id: createTicketDto.event_id },
       'date creator_id',
     );
-    const eventDate = event.date;
     const eventCreatorId = event.creator_id;
 
-    const reminderDate = getDateBeforeEvent(
-      eventDate,
-      createTicketDto.daysBefore,
-    );
     const ticket = new this.ticketModel({
       user_id,
       event_id: createTicketDto.event_id,
       creator_id: eventCreatorId,
-      reminder_date: reminderDate,
     });
 
     const ticketId = ticket._id.toString();
