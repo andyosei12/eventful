@@ -26,7 +26,10 @@ import {
 } from '@nestjs/swagger';
 import { Event } from '../common/models/Event';
 
-@Controller('events')
+@Controller({
+  path: 'events',
+  version: '1',
+})
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
