@@ -4,13 +4,19 @@ import { Role } from 'src/users/enums/role.enum';
 import { AnalyticsService } from './analytics.service';
 import { ActiveUser } from 'src/iam/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @Controller('analytics')
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
   @ApiBearerAuth()
+  @ApiOkResponse({ description: 'Total events' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Get('/events/total')
   getTotalEvents(@ActiveUser() user: ActiveUserData) {
@@ -19,6 +25,8 @@ export class AnalyticsController {
   }
 
   @ApiBearerAuth()
+  @ApiOkResponse({ description: 'Total tickets sold' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Get('/tickets_sold')
   getTicketsSold(@ActiveUser() user: ActiveUserData) {
@@ -27,6 +35,8 @@ export class AnalyticsController {
   }
 
   @ApiBearerAuth()
+  @ApiOkResponse({ description: 'Total completed tickets' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Get('/tickets/completed')
   getCompletedTickets(@ActiveUser() user: ActiveUserData) {
@@ -35,6 +45,8 @@ export class AnalyticsController {
   }
 
   @ApiBearerAuth()
+  @ApiOkResponse({ description: 'Total tickets sold for an event' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Get(':eventId/tickets_sold')
   getTicketsSoldByEvent(
@@ -46,6 +58,8 @@ export class AnalyticsController {
   }
 
   @ApiBearerAuth()
+  @ApiOkResponse({ description: 'Total completed tickets for an event' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Get(':eventId/tickets/completed')
   getCompletedTicketsByEvent(
@@ -60,6 +74,8 @@ export class AnalyticsController {
   }
 
   @ApiBearerAuth()
+  @ApiOkResponse({ description: 'Total revenue' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Get('revenue')
   getRevenue(@ActiveUser() user: ActiveUserData) {
@@ -68,6 +84,8 @@ export class AnalyticsController {
   }
 
   @ApiBearerAuth()
+  @ApiOkResponse({ description: 'Total revenue for an event' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Get(':eventId/revenue')
   getRevenueByEvent(
