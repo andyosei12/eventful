@@ -26,7 +26,10 @@ import {
 } from '@nestjs/swagger';
 import { Ticket, TicketQrCode } from '../common/models/Ticket';
 
-@Controller('tickets')
+@Controller({
+  path: 'tickets',
+  version: '1',
+})
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 

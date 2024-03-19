@@ -7,7 +7,10 @@ import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { User } from '../../common/models/User';
 import { AuthUser } from '../../common/models/AuthUser';
 
-@Controller('auth')
+@Controller({
+  path: 'auth',
+  version: '1',
+})
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

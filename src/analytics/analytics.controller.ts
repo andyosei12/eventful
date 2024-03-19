@@ -10,7 +10,10 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-@Controller('analytics')
+@Controller({
+  path: 'analytics',
+  version: '1',
+})
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
