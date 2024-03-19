@@ -1,11 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import {
   SwaggerModule,
   DocumentBuilder,
   SwaggerDocumentOptions,
 } from '@nestjs/swagger';
+import fs from 'node:fs';
+import { API_PREFIX } from './constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +22,14 @@ async function bootstrap() {
       },
     }),
   );
+
+  app
+    .enableVersioning({
+      type: VersioningType.URI,
+      defaultVersion: '1',
+    })
+    .setGlobalPrefix(API_PREFIX);
+
   const config = new DocumentBuilder()
     .setTitle('Eventful')
     .setDescription('Events Management System Api Description')
@@ -33,7 +43,7 @@ async function bootstrap() {
   };
 
   const document = SwaggerModule.createDocument(app, config, options);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup(`${API_PREFIX}/:version/docs`, app, document);
   await app.listen(3000);
 }
 bootstrap();

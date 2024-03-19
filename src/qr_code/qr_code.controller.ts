@@ -2,7 +2,10 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { QrCodeService } from './qr_code.service';
 import { ApiOkResponse } from '@nestjs/swagger';
 
-@Controller('qr-code')
+@Controller({
+  path: 'qr-code',
+  version: '1',
+})
 export class QrCodeController {
   constructor(private readonly qrCodeService: QrCodeService) {}
 
