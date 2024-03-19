@@ -17,13 +17,25 @@ import { ActiveUser } from '../iam/decorator/active-user.decorator';
 import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 import { Public } from '../iam/auth/decorators/skip-auth.decorator';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { Event } from '../common/models/Event';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @ApiBearerAuth()
+  @ApiCreatedResponse({
+    description: 'The event has been successfully created.',
+    type: Event,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Post()
   create(
@@ -37,12 +49,19 @@ export class EventsController {
   }
 
   @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'List of all events',
+    type: Event,
+    isArray: true,
+  })
   @Get()
   findAll(@Query() paginationQuery?: PaginationQueryDto) {
     return this.eventsService.findAll(paginationQuery);
   }
 
   @Public()
+  @ApiResponse({ status: 200, description: 'List of an event', type: Event })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.eventsService.findOne(id);
@@ -50,6 +69,13 @@ export class EventsController {
 
   // Get creator events
   @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'List of creator events',
+    type: Event,
+    isArray: true,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Get('/auth/creator')
   findCreatorEvents(
@@ -61,6 +87,8 @@ export class EventsController {
   }
 
   @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'Event updated successfully' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
@@ -68,6 +96,8 @@ export class EventsController {
   }
 
   @ApiBearerAuth()
+  @ApiNoContentResponse()
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Delete(':id')
   remove(@Param('id') id: string) {

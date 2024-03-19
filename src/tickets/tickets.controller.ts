@@ -16,13 +16,26 @@ import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 import { Roles } from '../iam/authorization/decorators/roles.decorator';
 import { Role } from '../users/enums/role.enum';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { Ticket, TicketQrCode } from '../common/models/Ticket';
 
 @Controller('tickets')
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
   @ApiBearerAuth()
+  @ApiCreatedResponse({
+    description: 'Ticket created successfully',
+    type: TicketQrCode,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Post()
   create(
     @Body() createTicketDto: CreateTicketDto,
@@ -33,6 +46,12 @@ export class TicketsController {
   }
 
   @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'List of completed tickets',
+    type: Ticket,
+    isArray: true,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('completed')
   findCompletedTickets(
     @Query() paginationQuery: PaginationQueryDto,
@@ -43,6 +62,12 @@ export class TicketsController {
 
   // Get all user tickets
   @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'List of user tickets',
+    type: Ticket,
+    isArray: true,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('auth/user')
   findUserTickets(
     @ActiveUser() user: ActiveUserData,
@@ -53,6 +78,8 @@ export class TicketsController {
   }
 
   @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'Updated ticket' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Patch(':ticketId')
   update(
@@ -63,6 +90,8 @@ export class TicketsController {
   }
 
   @ApiBearerAuth()
+  @ApiNoContentResponse()
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.ticketsService.remove(+id);
