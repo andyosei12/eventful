@@ -18,31 +18,50 @@ These three activities are at the core of the operations of Efiada: **Create,Exp
 
 ## API Documentation
 
-The following are routes and requirements for different endpoints of our api
+visit [Efiada Api Documentation](https://efiada.stoplight.io/docs/efiada/branches/main/48rhw5anw38he-eventful) for details of the api.
+
+The following are routes and requirements for different endpoints of our api as well.
 
 ### Authentication
 
-- _POST: /auth/signup_ => Endpoint for signing up a user. The first_name, last_name, email and password are required. The email is unique. The endpoint returns the created user
+- _POST: /api/v1/auth/signup_ => Endpoint for signing up a user. The first_name, last_name, email and password are required. The email is unique. The endpoint returns the created user
 
-- _POST: /auth/signin_ => Endpoint for login. Requires email and password and returns a jwt token and user info
+- _POST: /api/v1/auth/signin_ => Endpoint for login. Requires email and password and returns a jwt token and user info
 
 ### Events
 
-- _GET: /api/v1/blogs_ => Endpoint for fetching all blogs whether logged in or not logged in
+- _GET: /api/v1/events_ => Endpoint for fetching all events.
 
-- _GET: /api/v1/user/blogs_ => Endpoint for fetching all blogs of an authenticated user. It is required to pass in the jwt token in the authorization header to be able to get access to the blogs of a particaular user.
+- _GET: /api/v1/events/auth/create_ => Endpoint for fetching all blogs of an authenticated organizer. It is required to pass in the jwt token in the authorization header to be able to get access to the events of a particaular organizer.
 
-You can sort by the read_count,reading_time and created at. By default blogs are sorted by created_at.
 Results are limited to 20 documents per page
-You can also search by author,title and tags
-You can query by the state of the blog when a user is logged in (either draft of published).
 
-- _POST: /api/v1/blogs_ => Endpoint for creating a blog. Authorization header is also required to create task. The title, description,tags and body fields are required and these are the only fields needed to created a blog. The author of the blog is generated automatically.
+- _POST: /api/v1/events_ => Endpoint for creating an event. Authorization header is also required to create event. The title, description,price,days_before,location,time and date fields are required and these are the only fields needed to created an event.
 
-- _GET: /api/v1/blogs/:blogId_ => Endpoint to get details of a blog.
+- _GET: /api/v1/events/:eventId_ => Endpoint to get details of an event.
 
-- _PATCH: /api/v1/blogs/:blogId_ => For updating a blog. Authorization header is also required to update blog
+- _PATCH: /api/v1/events/:eventId_ => For updating a blog. Authorization header is also required to update event
 
-- _PATCH: /api/v1/blogs/:blogId/status_ => For updating a blog status to published. Authorization header is also required to update blog status
+- _DELETE: /api/v1/events/:eventId_ => For deleting event. Authorization header is also required to delete a blog
 
-- _DELETE: /api/v1/blogs/:blogId_ => For deleting blog. Authorization header is also required to delete a blog
+### Ticketing
+
+- _POST: /api/v1/tickets_ => Endpoint for creating a ticket. Authorization header is also required to create ticket. Pass the event_id in the body to create a ticket. A QR code uri is returned.
+- _GET: /api/v1/tickets/completed_ => Endpoint for getting all attended event tickets. Authorization header is also required.
+- _GET: /api/v1/tickets/auth/user_ => Endpoint for getting all event tickets of a user. Authorization header is also required.
+- _PATCH: /api/v1/tickets/{id}_ => Endpoint for updating a ticket. Authorization header is also required to update a ticket.
+- _DELETE: /api/v1/tickets/{id}_ => Endpoint for deleting a ticket. Authorization header is also required to update a ticket.
+
+### Analytics
+
+- _GET: /api/v1/analytics/events/total_ => Endpoint for getting the count of all events of an organizer. Authorization header is also required.
+- _GET: /api/v1/analytics/tickets-sold_ => Endpoint for getting the count of tickets sold for an organizer. Authorization header is also required.
+- _GET: /api/v1/analytics/tickets/completed_ => Endpoint for getting the count of all attendees for all events of an organizer. Authorization header is also required.
+- _GET: /api/v1/analytics/{eventId}/tickets-sold_ => Endpoint for getting the count of tickets sold for an event. Authorization header is also required.
+- _GET: /api/v1/analytics/{eventId}/tickets/completed_ => Endpoint for getting the count of all attendees for an event. Authorization header is also required.
+- _GET: /api/v1/analytics/revenue_ => Endpoint for getting the total revenue for an organizer. Authorization header is also required.
+- _GET: /api/v1/analytics/{eventId}/revenue_ => Endpoint for getting the total revenue for an event. Authorization header is also required.
+
+### QR Code Generation
+
+- _GET: /api/v1/analytics/qr-code/{ticketId}_ => Endpoint for getting the qr-code of a ticket. Authorization header is also required.
