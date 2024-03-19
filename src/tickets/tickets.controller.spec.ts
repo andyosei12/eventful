@@ -82,7 +82,7 @@ describe('TicketsController', () => {
     const userId = '6009c0eee65f6dce28fb3e50' as unknown as Types.ObjectId;
     const event = await eventModel.create(EventDto);
     const ticket = await controller.create(
-      { event_id: event._id.toString(), status: Status.Pending, daysBefore: 3 },
+      { event_id: event._id.toString(), status: Status.Pending },
       { sub: userId, email: 'drew@mail.com', role: Role.Regular },
     );
     expect(ticket.qr_code).toBeDefined();
