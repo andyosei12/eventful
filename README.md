@@ -4,7 +4,7 @@ Efiada is a word in the Ghanaian tribe (Akans) meaning Friday and we know the fu
 Efiada helps organizers of events create and manage events they are hosting and also gives users the convenience of purchasing tickets. Efiada seeks to expose people to unlimited fun.
 These three activities are at the core of the operations of Efiada: **Create,Explore,Enjoy**
 
-**Create an account or login and start managing your events. Visit [Curated](https://efiada.netlify.app/)**
+**Create an account or login and start managing your events. Visit [Efiada](https://efiada.netlify.app/)**
 
 ## Setting up your local environment
 
@@ -42,7 +42,7 @@ Results are limited to 20 documents per page
 
 - _PATCH: /api/v1/events/:eventId_ => For updating a blog. Authorization header is also required to update event
 
-- _DELETE: /api/v1/events/:eventId_ => For deleting event. Authorization header is also required to delete a blog
+- _DELETE: /api/v1/events/:eventId_ => For deleting event. Authorization header is also required to delete an event
 
 ### Ticketing
 
@@ -50,7 +50,7 @@ Results are limited to 20 documents per page
 - _GET: /api/v1/tickets/completed_ => Endpoint for getting all attended event tickets. Authorization header is also required.
 - _GET: /api/v1/tickets/auth/user_ => Endpoint for getting all event tickets of a user. Authorization header is also required.
 - _PATCH: /api/v1/tickets/{id}_ => Endpoint for updating a ticket. Authorization header is also required to update a ticket.
-- _DELETE: /api/v1/tickets/{id}_ => Endpoint for deleting a ticket. Authorization header is also required to update a ticket.
+- _DELETE: /api/v1/tickets/{id}_ => Endpoint for deleting a ticket. Authorization header is also required to delete a ticket.
 
 ### Analytics
 
