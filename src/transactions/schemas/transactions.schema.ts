@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { nanoid } from 'nanoid';
 
 export type TransactionDocument = HydratedDocument<Transaction>;
@@ -15,13 +15,19 @@ export class Transaction {
   @Prop()
   wallet_id: string;
 
+  @Prop()
+  event_id: string;
+
+  @Prop()
+  initiator_id: Types.ObjectId;
+
   @Prop({ enum: ['debit', 'credit'] })
   type: string;
 
   @Prop({ default: 0 })
   amount: number;
 
-  @Prop({ enum: ['pending', 'completed', 'failed'], default: 'pending' })
+  @Prop({ enum: ['pending', 'success', 'failed'], default: 'pending' })
   status: string;
 
   @Prop({ default: Date.now() })

@@ -12,7 +12,7 @@ export class Wallet {
   @Prop()
   balance: number;
 
-  @Prop({ unique: true })
+  @Prop()
   user_id: Types.ObjectId;
 
   @Prop({ default: Date.now() })
