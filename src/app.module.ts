@@ -11,6 +11,7 @@ import { TicketsModule } from './tickets/tickets.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { QrCodeModule } from './qr_code/qr_code.module';
 import { TaskModule } from './notifications/task.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TaskModule } from './notifications/task.module';
     AnalyticsModule,
     QrCodeModule,
     TaskModule,
+    TransactionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
