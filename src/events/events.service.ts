@@ -41,7 +41,7 @@ export class EventsService {
     const createdEvent = new this.eventModel(createEventDto);
     createdEvent.creator_id = creatorId;
     createdEvent.reminder_date = reminderDate;
-    await this.cloudinaryService
+    return await this.cloudinaryService
       .uploadImage(image_path)
       .then((res) => {
         createdEvent.image_secure_url = res.secure_url;

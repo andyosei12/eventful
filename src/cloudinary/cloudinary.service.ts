@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import cloudinaryConfig from './config/cloudinary.config';
 import {
@@ -33,6 +33,25 @@ export class CloudinaryService {
           resolve(result);
         }
       });
+    });
+  }
+
+  async getImageDetails(publicId: string) {
+    return await cloudinary.api
+      .resource(publicId)
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        throw new NotFoundException(`Resource with ${publicId} not found`);
+      });
+  }
+
+  async deleteImage(publicId: string) {
+    return await cloudinary.uploader.destroy(publicId).then((res) => {
+      if (res.result === 'ok') return res;
+
+      throw new NotFoundException(`Resource with ${publicId} not found`);
     });
   }
 }
