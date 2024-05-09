@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -25,6 +27,8 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Event } from '../common/models/Event';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Controller({
   path: 'events',
@@ -41,14 +45,22 @@ export class EventsController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.Creator)
   @Post()
+  @UseInterceptors(
+    FileInterceptor('image', {
+      dest: './uploads',
+    }),
+  )
   create(
     @Body() createEventDto: CreateEventDto,
+    @UploadedFile() image: Express.Multer.File,
     @ActiveUser() user: ActiveUserData,
   ) {
     const creatorId = user.sub;
     createEventDto.price = +createEventDto.price.toFixed(2);
     createEventDto.days_before = createEventDto.days_before || 1;
-    return this.eventsService.create(createEventDto, creatorId);
+    const image_path = image.path;
+    return this.eventsService.create(createEventDto, image_path, creatorId);
+    // return 'will create an event';
   }
 
   @Public()

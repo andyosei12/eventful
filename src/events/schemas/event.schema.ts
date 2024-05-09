@@ -18,6 +18,12 @@ export class Event {
   time: string;
 
   @Prop()
+  image_public_id: string;
+
+  @Prop()
+  image_secure_url: string;
+
+  @Prop()
   price: number;
 
   @Prop()

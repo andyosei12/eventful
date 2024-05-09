@@ -20,6 +20,9 @@ export class CreateEventDto {
   @IsDate()
   date: Date;
 
+  @ApiProperty()
+  image: File;
+
   @ApiProperty({
     description: 'The time event will take place',
   })
