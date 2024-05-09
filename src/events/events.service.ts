@@ -1,3 +1,4 @@
+import { rm } from 'fs';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -8,6 +9,7 @@ import getDateBeforeEvent from '../utils/getDateBeforeEvent';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 type EventData = {
   _id: Types.ObjectId;
@@ -24,8 +26,13 @@ export class EventsService {
   constructor(
     @InjectModel(Event.name) private eventModel: Model<Event>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
-  create(createEventDto: CreateEventDto, creatorId: Types.ObjectId) {
+  async create(
+    createEventDto: CreateEventDto,
+    image_path: string,
+    creatorId: Types.ObjectId,
+  ) {
     const reminderDate = getDateBeforeEvent(
       createEventDto.date,
       createEventDto.days_before,
@@ -34,7 +41,23 @@ export class EventsService {
     const createdEvent = new this.eventModel(createEventDto);
     createdEvent.creator_id = creatorId;
     createdEvent.reminder_date = reminderDate;
-    return createdEvent.save();
+    await this.cloudinaryService
+      .uploadImage(image_path)
+      .then((res) => {
+        createdEvent.image_secure_url = res.secure_url;
+        createdEvent.image_public_id = res.public_id;
+        return createdEvent.save();
+      })
+      .catch((err) => {
+        console.log(err);
+        throw new Error('Something went wrong');
+      })
+      .finally(() => {
+        rm(image_path, (err) => {
+          if (err) console.log(err);
+          console.log('file deleted successfully');
+        });
+      });
   }
 
   findAll(paginationQuery: PaginationQueryDto) {
