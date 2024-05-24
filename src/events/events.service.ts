@@ -55,7 +55,6 @@ export class EventsService {
       .finally(() => {
         rm(image_path, (err) => {
           if (err) console.log(err);
-          console.log('file deleted successfully');
         });
       });
   }

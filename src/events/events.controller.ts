@@ -60,7 +60,6 @@ export class EventsController {
     createEventDto.days_before = createEventDto.days_before || 1;
     const image_path = image.path;
     return this.eventsService.create(createEventDto, image_path, creatorId);
-    // return 'will create an event';
   }
 
   @Public()
