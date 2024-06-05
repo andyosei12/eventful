@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { SignupDto } from './dto/signup-dto';
+import { TellerDto } from './dto/teller-signup-dto';
 import { UsersService } from '../../users/users.service';
 import { HashingService } from './hashing/hashing.service';
 import { SigninDto } from './dto/signin-dto';
@@ -12,6 +13,7 @@ import { JwtService } from '@nestjs/jwt';
 import jwtConfig from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
+import { Role } from 'src/users/enums/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +32,31 @@ export class AuthService {
 
       // update the password with the hashed one
       signupDto.password = hashedPassword;
+      const user = await this.usersService.create(signupDto);
+      return user;
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new ConflictException('Email already exists');
+      }
+    }
+  }
+
+  async tellerSignUp(signupDto: TellerDto, role: Role) {
+    if (role !== Role.Creator) {
+      throw new UnauthorizedException(
+        'You are not authorized to perform this action',
+      );
+    }
+    try {
+      // generate a random password
+      const randomPassword = Math.random().toString(36).slice(-8);
+      console.log(randomPassword);
+      // hash generated password
+      const hashedPassword = await this.hashingService.hash(randomPassword);
+
+      // update the password with the hashed one
+      signupDto.password = hashedPassword;
+      signupDto.role = Role.Teller;
       const user = await this.usersService.create(signupDto);
       return user;
     } catch (error) {
