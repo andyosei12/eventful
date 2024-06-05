@@ -41,8 +41,8 @@ export class AuthService {
     }
   }
 
-  async tellerSignUp(signupDto: TellerDto, role: Role) {
-    if (role !== Role.Creator) {
+  async tellerSignUp(signupDto: TellerDto, activeUser: ActiveUserData) {
+    if (activeUser.role !== Role.Creator) {
       throw new UnauthorizedException(
         'You are not authorized to perform this action',
       );
@@ -58,6 +58,10 @@ export class AuthService {
       signupDto.password = hashedPassword;
       signupDto.role = Role.Teller;
       const user = await this.usersService.create(signupDto);
+      await this.usersService.createTeller({
+        user_id: user._id,
+        creator_id: activeUser.sub,
+      });
       return user;
     } catch (error) {
       if (error.code === 11000) {

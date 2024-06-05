@@ -32,9 +32,7 @@ export class AuthController {
     @Body() signupDto: TellerDto,
     @ActiveUser() user: ActiveUserData,
   ) {
-    console.log(user);
-    const role = user.role;
-    return this.authService.tellerSignUp(signupDto, role);
+    return this.authService.tellerSignUp(signupDto, user);
   }
 
   @HttpCode(HttpStatus.OK)
