@@ -14,6 +14,7 @@ import jwtConfig from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { Role } from 'src/users/enums/role.enum';
+import { MailService } from 'src/integrations/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
@@ -61,6 +63,11 @@ export class AuthService {
       await this.usersService.createTeller({
         user_id: user._id,
         creator_id: activeUser.sub,
+      });
+      await this.mailService.sendMail({
+        email: user.email,
+        body: `<h3>Your password is ${randomPassword}</h3>`,
+        subject: 'Welcome to Efiada',
       });
       return user;
     } catch (error) {

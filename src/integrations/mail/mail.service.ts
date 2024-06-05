@@ -4,10 +4,8 @@ import * as nodemailer from 'nodemailer';
 
 interface Mail {
   email: string;
-  name: string;
-  event: string;
-  date: Date;
-  time: string;
+  body: string;
+  subject: string;
 }
 
 @Injectable()
@@ -24,19 +22,14 @@ export class MailService {
     },
   });
 
-  async sendMail({ email, name, event, date, time }: Mail) {
+  async sendMail({ email, body, subject }: Mail) {
     try {
       const info = await this.transporter.sendMail({
         from: '"Efiada Inc" <nanaosei2089@gmail.com>', // sender address
         to: email, // receiver address
-        subject: `Reminder: ${event}`, // Subject line
+        subject, // Subject line
         // plain text body
-        html: `
-      <h3>Hi ${name}<h3/>
-      <p>You are reminded of the event, ${event} which is scheduled on ${date.toDateString()} at ${time}.</p>
-      <p>You can visit your dashboard to find your QR code</p>
-      <p>Thank you</p>
-      `, // html body
+        html: body, // html body
       });
 
       console.log('Message sent: %s', info.messageId);
