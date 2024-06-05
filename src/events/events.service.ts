@@ -9,7 +9,7 @@ import getDateBeforeEvent from '../utils/getDateBeforeEvent';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { CloudinaryService } from 'src/integrations/cloudinary/cloudinary.service';
 
 type EventData = {
   _id: Types.ObjectId;

@@ -12,7 +12,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { QrCodeModule } from './qr_code/qr_code.module';
 import { TaskModule } from './notifications/task.module';
 import { TransactionsModule } from './transactions/transactions.module';
-import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { IntegrationsModule } from './integrations/integrations.module';
 
 @Module({
   imports: [
@@ -27,7 +27,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     QrCodeModule,
     TaskModule,
     TransactionsModule,
-    CloudinaryModule,
+    IntegrationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
