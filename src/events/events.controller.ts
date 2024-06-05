@@ -28,7 +28,7 @@ import {
 } from '@nestjs/swagger';
 import { Event } from '../common/models/Event';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { CloudinaryService } from 'src/integrations/cloudinary/cloudinary.service';
 
 @Controller({
   path: 'events',
