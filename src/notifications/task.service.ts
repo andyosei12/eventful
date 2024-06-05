@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { MailService } from './mail.service';
 import { Event } from 'src/events/schemas/event.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Ticket } from 'src/tickets/schemas/tickets.schema';
 import { User } from 'src/users/schemas/users.schema';
+import { MailService } from 'src/integrations/mail/mail.service';
 
 @Injectable()
 export class TaskService {
@@ -52,10 +52,11 @@ export class TaskService {
         // send mail to user
         this.mailService.sendMail({
           email: user.email,
-          name: user.first_name,
-          event: event.title,
-          date: event.date,
-          time: event.time,
+          subject: `Reminder: ${event.title}`,
+          body: `<h3>Hi ${user.first_name}<h3/>
+      <p>You are reminded of the event, ${event} which is scheduled on ${event.date.toDateString()} at ${event.time}.</p>
+      <p>You can visit your dashboard to find your QR code</p>
+      <p>Thank you</p>`,
         });
       }
     }
