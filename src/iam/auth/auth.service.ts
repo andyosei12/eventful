@@ -52,7 +52,6 @@ export class AuthService {
     try {
       // generate a random password
       const randomPassword = Math.random().toString(36).slice(-8);
-      console.log(randomPassword);
       // hash generated password
       const hashedPassword = await this.hashingService.hash(randomPassword);
 
