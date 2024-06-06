@@ -6,6 +6,7 @@ import { User } from './schemas/users.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateTellerDto } from './dto/create-teller.dto';
 import { Teller } from './schemas/tellers.schema';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 
 @Injectable()
 export class UsersService {
@@ -27,5 +28,33 @@ export class UsersService {
     return this.userModel.findOne({
       email,
     });
+  }
+
+  async findTellers(user: ActiveUserData) {
+    // make a join with the users collection
+    return this.tellerModel.aggregate([
+      {
+        $match: {
+          creator_id: user.sub,
+        },
+      },
+      { $set: { user_id: { $toObjectId: '$user_id' } } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      {
+        $unwind: '$user',
+      },
+      {
+        $project: {
+          user: 1,
+        },
+      },
+    ]);
   }
 }
