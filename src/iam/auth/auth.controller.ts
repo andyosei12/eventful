@@ -9,6 +9,8 @@ import { AuthUser } from '../../common/models/AuthUser';
 import { TellerDto } from './dto/teller-signup-dto';
 import { ActiveUser } from '../decorator/active-user.decorator';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
+import { Roles } from '../authorization/decorators/roles.decorator';
+import { Role } from 'src/users/enums/role.enum';
 
 @Controller({
   path: 'auth',
@@ -27,6 +29,7 @@ export class AuthController {
     return this.authService.signup(signupDto);
   }
 
+  @Roles(Role.Creator)
   @Post('teller-signup')
   tellerSignUp(
     @Body() signupDto: TellerDto,

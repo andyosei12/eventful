@@ -83,13 +83,12 @@ export class TicketsController {
   @ApiBearerAuth()
   @ApiResponse({ status: 200, description: 'Updated ticket' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @Roles(Role.Creator)
   @Patch(':ticketId')
   update(
     @Param('ticketId') ticketId: string,
     @ActiveUser() user: ActiveUserData,
   ) {
-    return this.ticketsService.update(ticketId, user.sub);
+    return this.ticketsService.update(ticketId, user);
   }
 
   @ApiBearerAuth()

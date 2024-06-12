@@ -15,12 +15,15 @@ import { Status } from './enums/status.enum';
 import getDateBeforeEvent from '../utils/getDateBeforeEvent';
 import { Event } from '../events/schemas/event.schema';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { Teller } from 'src/users/schemas/tellers.schema';
 
 @Injectable()
 export class TicketsService {
   constructor(
     @InjectModel(Ticket.name) private readonly ticketModel: Model<Ticket>,
     @InjectModel(Event.name) private readonly eventModel: Model<Event>,
+    @InjectModel(Teller.name) private readonly tellerModel: Model<Teller>,
   ) {}
 
   async create(createTicketDto: CreateTicketDto, user_id: Types.ObjectId) {
@@ -137,18 +140,31 @@ export class TicketsService {
       .exec();
   }
 
-  async update(ticketId: string, user_id: Types.ObjectId) {
+  async update(ticketId: string, user: ActiveUserData) {
+    // Check the role of the user
+    let creator_id: Types.ObjectId;
+
+    if (user.role === 'creator') {
+      creator_id = user.sub;
+    } else if (user.role === 'teller') {
+      const teller = await this.tellerModel.findOne({
+        user_id: new Types.ObjectId(user.sub),
+      });
+      creator_id = teller.creator_id;
+    }
+
     // Check if the ticket exists
     const ticket = await this.ticketModel.findOne({
       _id: ticketId,
-      creator_id: user_id,
+      creator_id,
     });
+
     if (!ticket) {
       throw new NotFoundException('Ticket not found');
     } else if (ticket.status === Status.Completed) {
       throw new ConflictException('Ticket has already been scanned or used');
     }
-    // Check if the user is the creator of the event
+
     const event = await this.eventModel.findOne({
       _id: ticket.event_id,
     });
