@@ -44,11 +44,6 @@ export class AuthService {
   }
 
   async tellerSignUp(signupDto: TellerDto, activeUser: ActiveUserData) {
-    if (activeUser.role !== Role.Creator) {
-      throw new UnauthorizedException(
-        'You are not authorized to perform this action',
-      );
-    }
     try {
       // generate a random password
       const randomPassword = Math.random().toString(36).slice(-8);
