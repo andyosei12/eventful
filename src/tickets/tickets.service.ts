@@ -17,6 +17,7 @@ import { Event } from '../events/schemas/event.schema';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Teller } from 'src/users/schemas/tellers.schema';
+import { User } from 'src/users/schemas/users.schema';
 
 @Injectable()
 export class TicketsService {
@@ -24,6 +25,7 @@ export class TicketsService {
     @InjectModel(Ticket.name) private readonly ticketModel: Model<Ticket>,
     @InjectModel(Event.name) private readonly eventModel: Model<Event>,
     @InjectModel(Teller.name) private readonly tellerModel: Model<Teller>,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
   async create(createTicketDto: CreateTicketDto, user_id: Types.ObjectId) {
@@ -161,13 +163,22 @@ export class TicketsService {
 
     if (!ticket) {
       throw new NotFoundException('Ticket not found');
-    } else if (ticket.status === Status.Completed) {
-      throw new ConflictException('Ticket has already been scanned or used');
     }
 
     const event = await this.eventModel.findOne({
       _id: ticket.event_id,
     });
+    const ticketHolder = await this.userModel.findById(ticket.user_id);
+    const userName = ticketHolder.first_name + ' ' + ticketHolder.last_name;
+
+    if (ticket.status === Status.Completed) {
+      // throw new ConflictException('Ticket has already been scanned or used');
+      return {
+        message: 'Ticket has already been scanned',
+        event: event.title,
+        user: userName,
+      };
+    }
 
     // Update the ticket status
     await this.ticketModel.updateOne(
@@ -177,6 +188,8 @@ export class TicketsService {
 
     return {
       message: `Access granted for ${event.title}`,
+      event: event.title,
+      user: userName,
     };
   }
 
