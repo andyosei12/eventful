@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User } from './schemas/users.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateTellerDto } from './dto/create-teller.dto';
@@ -56,5 +56,15 @@ export class UsersService {
         },
       },
     ]);
+  }
+
+  async removeTeller(user_id: string) {
+    await this.userModel.deleteOne({
+      _id: user_id,
+    });
+
+    return this.tellerModel.deleteOne({
+      user_id: new Types.ObjectId(user_id),
+    });
   }
 }

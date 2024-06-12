@@ -29,4 +29,9 @@ export class UsersController {
   findTellers(@ActiveUser() user: ActiveUserData) {
     return this.usersService.findTellers(user);
   }
+
+  @Delete('/tellers/:id')
+  removeTeller(@Param('id') user_id: string) {
+    return this.usersService.removeTeller(user_id);
+  }
 }
