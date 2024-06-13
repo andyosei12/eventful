@@ -66,4 +66,10 @@ export class AuthController {
     const user_id = user.sub;
     return this.authService.resetPassword(user_id, passwordDto);
   }
+
+  @Public()
+  @Post('/forgot-password')
+  forgotPassword(@Body() { email }: { email: string }) {
+    return this.authService.forgotPassword(email);
+  }
 }
