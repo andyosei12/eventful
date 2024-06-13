@@ -144,4 +144,34 @@ export class AuthService {
 
     return await this.usersService.findOneAndUpdate(user_id, updateObj);
   }
+
+  // forgot password
+  async forgotPassword(email: string) {
+    // find the user
+    const user = await this.usersService.findOne(email);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // generate a random password
+    const randomPassword = Math.random().toString(36).slice(-8);
+    // hash generated password
+    const hashedPassword = await this.hashingService.hash(randomPassword);
+
+    const updateObj: UpdateUserDto = {
+      password: hashedPassword,
+    };
+
+    await this.usersService.findOneAndUpdate(user._id, updateObj);
+
+    await this.mailService.sendMail({
+      email: user.email,
+      body: `<h3>Your password is ${randomPassword}</h3>`,
+      subject: 'Password Reset',
+    });
+
+    return {
+      message: 'Password reset successful',
+    };
+  }
 }
