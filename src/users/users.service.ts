@@ -24,6 +24,10 @@ export class UsersService {
     return await createdTeller.save();
   }
 
+  async findOneById(user_id: Types.ObjectId) {
+    return this.userModel.findById(user_id);
+  }
+
   findOne(email: string) {
     return this.userModel.findOne({
       email,
@@ -56,6 +60,10 @@ export class UsersService {
         },
       },
     ]);
+  }
+
+  async findOneAndUpdate(user_id: Types.ObjectId, userDto: UpdateUserDto) {
+    return await this.userModel.findByIdAndUpdate(user_id, userDto);
   }
 
   async removeTeller(user_id: string) {

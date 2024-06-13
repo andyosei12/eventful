@@ -2,6 +2,7 @@ import {
   ConflictException,
   Inject,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { SignupDto } from './dto/signup-dto';
@@ -15,6 +16,9 @@ import { ConfigType } from '@nestjs/config';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { Role } from 'src/users/enums/role.enum';
 import { MailService } from 'src/integrations/mail/mail.service';
+import { Types } from 'mongoose';
+import { PasswordDto } from './dto/password-dto';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -111,5 +115,33 @@ export class AuthService {
         id: user._id,
       },
     };
+  }
+
+  // reset user password
+  async resetPassword(user_id: Types.ObjectId, passwordDto: PasswordDto) {
+    // find the user
+    const user = await this.usersService.findOneById(user_id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // compare if current passwords match
+    const isPasswordMatch = await this.hashingService.compare(
+      passwordDto.currentPassword,
+      user.password,
+    );
+
+    if (!isPasswordMatch) {
+      throw new ConflictException('Passwords do not match');
+    }
+
+    // hash new password
+    const password = await this.hashingService.hash(passwordDto.newPassword);
+
+    const updateObj: UpdateUserDto = {
+      password,
+    };
+
+    return await this.usersService.findOneAndUpdate(user_id, updateObj);
   }
 }
