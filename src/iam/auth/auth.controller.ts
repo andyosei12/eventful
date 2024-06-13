@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup-dto';
 import { SigninDto } from './dto/signin-dto';
@@ -11,6 +18,7 @@ import { ActiveUser } from '../decorator/active-user.decorator';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { Roles } from '../authorization/decorators/roles.decorator';
 import { Role } from 'src/users/enums/role.enum';
+import { PasswordDto } from './dto/password-dto';
 
 @Controller({
   path: 'auth',
@@ -47,5 +55,15 @@ export class AuthController {
   @Post('signin')
   signin(@Body() signinDto: SigninDto) {
     return this.authService.signin(signinDto);
+  }
+
+  // reset password
+  @Patch('/reset-password')
+  resetPassword(
+    @Body() passwordDto: PasswordDto,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    const user_id = user.sub;
+    return this.authService.resetPassword(user_id, passwordDto);
   }
 }
