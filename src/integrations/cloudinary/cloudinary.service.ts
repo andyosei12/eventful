@@ -36,6 +36,20 @@ export class CloudinaryService {
     });
   }
 
+  async updateImage(filePath:string, public_id: string): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    return new Promise((resolve,reject) => {
+      cloudinary.uploader.upload(filePath, {
+        public_id
+      }, (error,result) => {
+        if(error) {
+          reject(error)
+        } else {
+          resolve(result)
+        }
+      })
+    })
+  }
+
   async getImageDetails(publicId: string) {
     return await cloudinary.api
       .resource(publicId)

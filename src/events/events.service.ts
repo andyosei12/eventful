@@ -140,6 +140,44 @@ export class EventsService {
     }
   }
 
+  // Update event photo
+  async updateEventPhoto(id: string, image_path: string) {
+    const event = await this.eventModel.findById(id).exec();
+
+    if (!event) {
+      throw new NotFoundException(`Event with id ${id} not found`);
+    }
+
+    const public_id = event.image_public_id;
+
+    return await this.cloudinaryService
+      .updateImage(image_path, public_id)
+      .then(async (res) => {
+        const updatedEvent = await this.eventModel
+          .findByIdAndUpdate(
+            id,
+            {
+              image_secure_url: res.secure_url,
+            },
+            { new: true },
+          )
+          .exec();
+        await this.cacheManager.del(id);
+        return {
+          image_secure_url: updatedEvent.image_secure_url,
+        };
+      })
+      .catch((err) => {
+        console.log(err);
+        throw new Error('Something went wrong');
+      })
+      .finally(() => {
+        rm(image_path, (err) => {
+          if (err) console.log(err);
+        });
+      });
+  }
+
   async remove(id: string) {
     try {
       return await this.eventModel.deleteOne({ _id: id }).exec();

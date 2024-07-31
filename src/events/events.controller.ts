@@ -109,6 +109,21 @@ export class EventsController {
     return this.eventsService.update(id, updateEventDto);
   }
 
+  @Roles(Role.Creator)
+  @Patch('/photo/:id')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      dest: './uploads',
+    }),
+  )
+  updateEventPhoto(
+    @Param('id') id: string,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    const image_path = image.path;
+    return this.eventsService.updateEventPhoto(id, image_path);
+  }
+
   @ApiBearerAuth()
   @ApiNoContentResponse()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
