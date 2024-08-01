@@ -102,8 +102,10 @@ export class PaymentService {
       const paystackFees = body.data.fees / 100;
       // Deductible amount for administration charges
       const deductibleAmount = transaction.amount - paystackFees;
-      const adminCharges = (2 / 100) * deductibleAmount;
-      const walletBalance = deductibleAmount - adminCharges;
+      // TODO: Review the admin charges later
+      // const adminCharges = (2 / 100) * deductibleAmount;
+      // const walletBalance = deductibleAmount - adminCharges;
+      const walletBalance = deductibleAmount;
       wallet.balance = wallet.balance + walletBalance;
       wallet.save();
 

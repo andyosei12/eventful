@@ -6,7 +6,7 @@ export type WalletDocument = HydratedDocument<Wallet>;
 
 @Schema()
 export class Wallet {
-  @Prop({ default: () => nanoid(10) })
+  @Prop({ default: () => nanoid() })
   _id: string;
 
   @Prop()
