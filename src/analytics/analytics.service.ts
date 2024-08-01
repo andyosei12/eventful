@@ -75,9 +75,9 @@ export class AnalyticsService {
 
   async getRevenue(creator_id: Types.ObjectId) {
     const revenue = await this.walletModel.find({ user_id: creator_id });
-    const balance = revenue[0].balance.toFixed(2);
+    const balance = +revenue[0]?.balance.toFixed(2);
     return {
-      balance,
+      balance: balance || 0,
     };
   }
 
