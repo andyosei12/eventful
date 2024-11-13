@@ -25,7 +25,6 @@ import { IntegrationsModule } from './integrations/integrations.module';
     TicketsModule,
     AnalyticsModule,
     QrCodeModule,
-    TaskModule,
     TransactionsModule,
     IntegrationsModule,
   ],

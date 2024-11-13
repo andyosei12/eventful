@@ -58,7 +58,7 @@ export class PaymentService {
 
       const data = {
         amount: event.price * 100,
-        email: user.email,
+        email: 'nanaosei2089@gmail.com',
         reference: transaction._id,
       };
 

@@ -1,6 +1,6 @@
 import {
-  IsEmail,
   IsEnum,
+  IsNumber,
   IsOptional,
   IsString,
   MinLength,
@@ -23,8 +23,8 @@ export class CreateUserDto {
   @ApiProperty({
     example: 'andy@mail.com',
   })
-  @IsEmail()
-  email: string;
+  @IsString()
+  phone_number: string;
 
   @ApiProperty({
     example: 'hello123',

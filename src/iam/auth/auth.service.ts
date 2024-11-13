@@ -19,6 +19,7 @@ import { MailService } from 'src/integrations/mail/mail.service';
 import { Types } from 'mongoose';
 import { PasswordDto } from './dto/password-dto';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
+import { SmsService } from 'src/integrations/sms/sms.service';
 
 @Injectable()
 export class AuthService {
@@ -27,6 +28,7 @@ export class AuthService {
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
+    private readonly smsService: SmsService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
@@ -42,7 +44,7 @@ export class AuthService {
       return user;
     } catch (error) {
       if (error.code === 11000) {
-        throw new ConflictException('Email already exists');
+        throw new ConflictException('Phone number already exists');
       }
     }
   }
@@ -62,25 +64,33 @@ export class AuthService {
         user_id: user._id,
         creator_id: activeUser.sub,
       });
-      await this.mailService.sendMail({
-        email: user.email,
-        body: `<h3>Your password is ${randomPassword}</h3>`,
-        subject: 'Welcome to Efiada',
+
+      const message = `Welcome to Efiada. Your password is ${randomPassword}`;
+
+      await this.smsService.sendSms({
+        phoneNumber: user.phone_number,
+        sender: 'Efiada',
+        body: message,
       });
+      // await this.mailService.sendMail({
+      //   email: user.email,
+      //   body: `<h3>Your password is ${randomPassword}</h3>`,
+      //   subject: 'Welcome to Efiada',
+      // });
       return user;
     } catch (error) {
       if (error.code === 11000) {
-        throw new ConflictException('Email already exists');
+        throw new ConflictException('Phone number already exists');
       }
     }
   }
 
   async signin(signinDto: SigninDto) {
     // check if user with email exists
-    const user = await this.usersService.findOne(signinDto.email);
+    const user = await this.usersService.findOne(signinDto.phone_number);
     if (!user) {
       throw new UnauthorizedException(
-        'User does not exist. Check email or password',
+        'User does not exist. Check phone number or password',
       );
     }
 
@@ -98,7 +108,7 @@ export class AuthService {
     // send a jwt token
     const payload: ActiveUserData = {
       sub: user._id,
-      email: user.email,
+      phone_number: user.phone_number,
       role: user.role,
     };
     const accessToken = await this.jwtService.signAsync(payload, {
@@ -109,7 +119,7 @@ export class AuthService {
     return {
       accessToken,
       user: {
-        email: user.email,
+        phoneNumber: user.phone_number,
         role: user.role,
         firstName: user.first_name,
         id: user._id,
@@ -146,9 +156,9 @@ export class AuthService {
   }
 
   // forgot password
-  async forgotPassword(email: string) {
+  async forgotPassword(phoneNumber: string) {
     // find the user
-    const user = await this.usersService.findOne(email);
+    const user = await this.usersService.findOne(phoneNumber);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -164,11 +174,19 @@ export class AuthService {
 
     await this.usersService.findOneAndUpdate(user._id, updateObj);
 
-    await this.mailService.sendMail({
-      email: user.email,
-      body: `<h3>Your password is ${randomPassword}</h3>`,
-      subject: 'Password Reset',
+    const message = `Your new password is ${randomPassword}`;
+
+    await this.smsService.sendSms({
+      phoneNumber: user.phone_number,
+      sender: 'Efiada',
+      body: message,
     });
+
+    // await this.mailService.sendMail({
+    //   email: user.email,
+    //   body: `<h3>Your password is ${randomPassword}</h3>`,
+    //   subject: 'Password Reset',
+    // });
 
     return {
       message: 'Password reset successful',

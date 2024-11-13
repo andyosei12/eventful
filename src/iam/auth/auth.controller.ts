@@ -69,7 +69,7 @@ export class AuthController {
 
   @Public()
   @Post('/forgot-password')
-  forgotPassword(@Body() { email }: { email: string }) {
-    return this.authService.forgotPassword(email);
+  forgotPassword(@Body() { phone_number }: { phone_number: string }) {
+    return this.authService.forgotPassword(phone_number);
   }
 }

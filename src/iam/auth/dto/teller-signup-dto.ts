@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsEmail,
+  IsNumber,
   IsEnum,
   IsOptional,
   IsString,
@@ -22,10 +22,10 @@ export class TellerDto {
   last_name: string;
 
   @ApiProperty({
-    example: 'drew@mail.com',
+    example: '0200XXXXXXX',
   })
-  @IsEmail()
-  email: string;
+  @IsString()
+  phone_number: string;
 
   @ApiProperty({
     description: 'Password must be at least 8 characters long',

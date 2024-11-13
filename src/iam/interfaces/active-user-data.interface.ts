@@ -3,6 +3,6 @@ import { Role } from 'src/users/enums/role.enum';
 
 export interface ActiveUserData {
   sub: Types.ObjectId;
-  email: string;
+  phone_number: string;
   role: Role;
 }

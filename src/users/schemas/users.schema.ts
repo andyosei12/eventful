@@ -13,7 +13,7 @@ export class User {
   last_name: string;
 
   @Prop({ unique: true })
-  email: string;
+  phone_number: string;
 
   @Prop()
   password: string;
