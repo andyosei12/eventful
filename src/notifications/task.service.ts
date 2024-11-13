@@ -50,14 +50,14 @@ export class TaskService {
           return;
         }
         // send mail to user
-        this.mailService.sendMail({
-          email: user.email,
-          subject: `Reminder: ${event.title}`,
-          body: `<h3>Hi ${user.first_name}<h3/>
-      <p>You are reminded of the event, ${event} which is scheduled on ${event.date.toDateString()} at ${event.time}.</p>
-      <p>You can visit your dashboard to find your QR code</p>
-      <p>Thank you</p>`,
-        });
+        //   this.mailService.sendMail({
+        //     email: user.email,
+        //     subject: `Reminder: ${event.title}`,
+        //     body: `<h3>Hi ${user.first_name}<h3/>
+        // <p>You are reminded of the event, ${event} which is scheduled on ${event.date.toDateString()} at ${event.time}.</p>
+        // <p>You can visit your dashboard to find your QR code</p>
+        // <p>Thank you</p>`,
+        //   });
       }
     }
   }

@@ -28,9 +28,9 @@ export class UsersService {
     return this.userModel.findById(user_id);
   }
 
-  findOne(email: string) {
+  findOne(phone_number: string) {
     return this.userModel.findOne({
-      email,
+      phone_number,
     });
   }
 
