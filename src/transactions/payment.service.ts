@@ -47,8 +47,9 @@ export class PaymentService {
         });
       }
 
+      // TODO: Adding of 1 to the amount is temporal. Review later
       const transaction = await this.transactionModel.create({
-        amount: event.price,
+        amount: event.price + 1,
         status: 'pending',
         type: 'credit',
         wallet_id: wallet._id,
@@ -57,7 +58,7 @@ export class PaymentService {
       });
 
       const data = {
-        amount: event.price * 100,
+        amount: (event.price + 1) * 100,
         email: 'nanaosei2089@gmail.com',
         reference: transaction._id,
       };
